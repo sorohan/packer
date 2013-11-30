@@ -104,6 +104,7 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 			AvailabilityZone:   b.config.AvailabilityZone,
 			BlockDevices:       b.config.BlockDevices,
 		},
+		&awscommon.StepAllocateAddress{},
 		&common.StepConnectSSH{
 			SSHAddress:     awscommon.SSHAddress(ec2conn, b.config.SSHPort),
 			SSHConfig:      awscommon.SSHConfig(b.config.SSHUsername),
