@@ -15,9 +15,9 @@ import (
 //   addressAssociationId: string - The ID of the address association.
 //   publicIp: string - The Public IP of the instance.
 type StepAllocateAddress struct {
-	addressAllocationId string
+	addressAllocationId  string
 	addressAssociationId string
-    publicIp string
+	publicIp             string
 }
 
 func (s *StepAllocateAddress) Run(state multistep.StateBag) multistep.StepAction {
@@ -48,8 +48,8 @@ func (s *StepAllocateAddress) Run(state multistep.StateBag) multistep.StepAction
 	s.addressAllocationId = allocateAddressResp.AllocationId
 	log.Printf("Address Allocation ID: %s", s.addressAllocationId)
 
-    // Set the public IP so we can connect to it later.
-    s.publicIp = allocateAddressResp.PublicIp
+	// Set the public IP so we can connect to it later.
+	s.publicIp = allocateAddressResp.PublicIp
 
 	ui.Say(fmt.Sprintf("Associating new EIP: %s...", allocateAddressResp.PublicIp))
 	// Associate the EIP with the VPC instance.
@@ -73,7 +73,7 @@ func (s *StepAllocateAddress) Run(state multistep.StateBag) multistep.StepAction
 	log.Printf("Address Association ID: %s", s.addressAssociationId)
 
 	state.Put("address_allocation_id", s.addressAllocationId)
-    state.Put("public_ip", s.publicIp)
+	state.Put("public_ip", s.publicIp)
 	state.Put("address_associate_id", s.addressAssociationId)
 	return multistep.ActionContinue
 }
@@ -82,16 +82,16 @@ func (s *StepAllocateAddress) Cleanup(state multistep.StateBag) {
 	ec2conn := state.Get("ec2").(*ec2.EC2)
 	ui := state.Get("ui").(packer.Ui)
 
-    if s.addressAssociationId != "" {
-        ui.Say("Disassociating the EIP...")
+	if s.addressAssociationId != "" {
+		ui.Say("Disassociating the EIP...")
 		_, err := ec2conn.DisassociateAddress(s.addressAssociationId)
 		if err != nil {
 			ui.Error(fmt.Sprintf("Error disassociating EIP: %s", err))
 		}
-    }
+	}
 
 	if s.addressAllocationId != "" {
-        ui.Say("Releasing the EIP...")
+		ui.Say("Releasing the EIP...")
 		_, err := ec2conn.ReleaseAddress(s.addressAllocationId)
 		if err != nil {
 			ui.Error(fmt.Sprintf("Error releasing EIP: %s", err))
